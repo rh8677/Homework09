@@ -11,31 +11,6 @@ folds = [[]] * 10  # The list containing arrays of data for each fold
 split_num = 0  # The number of records (FROM EACH CLASS) to append to each fold
 
 
-# This function will create the specified amount of random decision trees for a random forest
-#
-# argument 1 (tree_num) - the amount of tree stumps to make
-def create_forest(tree_num):
-    random_forest = open("HW_09_rh8677@g.rit.edu_Classifier.py", "w")
-    random_forest.write("import csv\n")
-    random_forest.write("import sys\n")
-    random_forest.write("\n")
-    random_forest.write("\n")
-    random_forest.write("# This function reads the csv file specified in the command line, and classifies each row of "
-                        "data into one of\n")
-    random_forest.write("# two classes.\n")
-    random_forest.write("if __name__ == '__main__':\n")
-    random_forest.write("    # If the amount of arguments (plus the name of the program) is not 2, we will inform the "
-                        "user.\n")
-    random_forest.write("    if len(sys.argv) != 2:\n")
-    random_forest.write("        print(\"Error - invalid number of arguments (must specify the csv file)\")\n")
-    random_forest.write("    else:\n")
-    random_forest.write("        try:\n")
-    random_forest.write("            # The second cmd argument is the csv file we have to open and retrieve data "
-                        "from\n")
-    random_forest.write("            with open(sys.argv[1]) as csv_file:\n")
-    random_forest.write("                read_data = csv.reader(csv_file)\n")
-
-
 # This function will attempt 10-Fold Cross Validation for all values in the stump_nums global array
 def cross_validate():
     best_stump = 0  # The number of stumps that resulted in the least amount of mistakes
@@ -43,13 +18,54 @@ def cross_validate():
 
     # Will perform cross validation for all numbers of stumps
     for stump in stump_nums:
-        local_mistakes = 0  # The total amount of mistakes for this "depth"
-        ran_attr = random.randint(0, 6)  # Select a random number from 0 to 6 that represents a certain attribute
-        ran_hold = random.choice(attr_array[ran_attr])  # Select a random threshold value for the random attribute
-        fold_count = 0  # The index of the current fold that we are training on
 
-        while fold_count < 10:
-            fold_count += 1
+        # Create a classifier program with all the decision stumps that will be tested
+        random_forest = open("HW_09_rh8677@g.rit.edu_Classifier.py", "w")
+        random_forest.write("import csv\n")
+        random_forest.write("import sys\n")
+        random_forest.write("\n")
+        random_forest.write("\n")
+        random_forest.write(
+            "# This function reads the csv file specified in the command line, and classifies each row of "
+            "data into one of\n")
+        random_forest.write("# two classes.\n")
+        random_forest.write("if __name__ == '__main__':\n")
+        random_forest.write(
+            "    # If the amount of arguments (plus the name of the program) is not 2, we will inform the "
+            "user.\n")
+        random_forest.write("    if len(sys.argv) != 2:\n")
+        random_forest.write("        print(\"Error - invalid number of arguments (must specify the csv file)\")\n")
+        random_forest.write("    else:\n")
+        random_forest.write("        try:\n")
+        random_forest.write("            # The second cmd argument is the csv file we have to open and retrieve data "
+                            "from\n")
+        random_forest.write("            with open(sys.argv[1]) as csv_file:\n")
+        random_forest.write("                read_data = csv.reader(csv_file)\n")
+
+        local_mistakes = 0  # The total amount of mistakes for this "depth"
+        stump_count = 0  # The index of the current stump that we are creating
+
+        while stump_count < stump:
+            ran_attr = random.randint(0, 6)  # Select a random number from 0 to 6 that represents a certain attribute
+            ran_hold = random.choice(attr_array[ran_attr])  # Select a random threshold value for the random attribute
+            fold_count = 0  # The index of the current fold that we are training on
+
+            while fold_count < 10:
+                assam_count = 0  # The amount of Assams less than or equal to the random threshold
+                bhutan_count = 0  # The amount of Bhutans less than or equal to the random threshold
+                local_count = 0
+
+                while local_count < 10:
+                    if local_count == fold_count:
+                        continue
+
+                    for the_record in folds[local_count]:
+                        if the_record[ran_attr] <= ran_hold and the_record[7] == -1:
+                            assam_count += 1
+                        else:
+                            bhutan_count += 1
+
+                fold_count += 1
 
 
 # This function reads the csv file specified in the command line, and separates data into either one
